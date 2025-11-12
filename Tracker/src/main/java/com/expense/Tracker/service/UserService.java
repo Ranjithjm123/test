@@ -1,5 +1,6 @@
 package com.expense.Tracker.service;
 
+import com.expense.Tracker.dto.RegisterRequest;
 import com.expense.Tracker.entity.User;
 import com.expense.Tracker.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,10 +15,15 @@ public class UserService {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-    public String registerUser(User user){
-        if(userRepository.findByEmail(user.getEmail()).isPresent())
+    public String registerUser(RegisterRequest request){
+        if(userRepository.findByEmail(request.getEmail()).isPresent())
             return "Email already exists";
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
+
+        User user = new User();
+        user.setFullname(request.getFullname());
+        user.setEmail(request.getEmail());
+        user.setPassword(passwordEncoder.encode(request.getPassword()));
+
         userRepository.save(user);
         return "User Registered successfully";
     }

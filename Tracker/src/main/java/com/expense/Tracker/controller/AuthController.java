@@ -1,6 +1,7 @@
 package com.expense.Tracker.controller;
 
-import com.expense.Tracker.entity.User;
+import com.expense.Tracker.dto.LoginRequest;
+import com.expense.Tracker.dto.RegisterRequest;
 import com.expense.Tracker.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -14,12 +15,12 @@ public class AuthController {
     private UserService userService;
 
     @PostMapping("/register")
-    public String register(@RequestBody User user){
-        return userService.registerUser(user);
+    public String register(@RequestBody RegisterRequest registerRequest){
+        return userService.registerUser(registerRequest);
     }
 
     @PostMapping("/login")
-    public String login(@RequestBody User loginRequest) {
+    public String login(@RequestBody LoginRequest loginRequest) {
         return userService.loginUser(loginRequest.getEmail(), loginRequest.getPassword());
     }
 }
