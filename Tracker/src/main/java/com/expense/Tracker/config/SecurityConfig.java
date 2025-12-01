@@ -1,5 +1,6 @@
 package com.expense.Tracker.config;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -7,10 +8,14 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
+
+    @Autowired
+    private JwtFilter jwtFilter;
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -19,24 +24,20 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http
-                // ✅ Disable CSRF for REST APIs
-                .csrf(csrf -> csrf.disable())
+        http.csrf(csrf -> csrf.disable())
 
-                // ✅ Allow unauthenticated access to Swagger and auth endpoints
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
+                                "/api/auth/**",
                                 "/swagger-ui/**",
-                                "/v3/api-docs/**",
-                                "/swagger-resources/**",
-                                "/webjars/**",
-                                "/api/auth/**"
+                                "/v3/api-docs/**"
                         ).permitAll()
                         .anyRequest().authenticated()
                 )
 
-                // ✅ Disable form login and HTTP Basic (so no default login popup)
-                .formLogin(form -> form.disable())
+                .addFilterBefore(jwtFilter, BasicAuthenticationFilter.class)
+
+                .formLogin(login -> login.disable())
                 .httpBasic(basic -> basic.disable());
 
         return http.build();
