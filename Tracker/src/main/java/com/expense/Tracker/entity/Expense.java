@@ -15,12 +15,9 @@ public class Expense {
     @JoinColumn(name = "user_id")
     private User user;
 
-    @Column(nullable = true)
-    private String catagory;
-
-    @Column(nullable = true)
+    private String category;
     private String reason;
 
     @Column(nullable = false)
-    private Long Amount;
+    private Long amount;
 }
